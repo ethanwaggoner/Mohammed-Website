@@ -4,20 +4,31 @@
 
 <template>
   <nav class="navbar">
-    <ul class="navbar-nav">
-      <li><a href="/">Home</a></li>
-      <li><a href="/about">About</a></li>
-      <li><a href="/blog">Blog</a></li>
-      <li><a href="/media">Media</a></li>
-      <li><a href="/contact">Contact</a></li>
-    </ul>
-    <div class="social-media">
-      <a href="https://instagram.com" target="_blank">Instagram Icon</a>
-      <a href="https://facebook.com" target="_blank">Facebook Icon</a>
-      <a href="https://twitter.com" target="_blank">Twitter Icon</a>
+    <div class="navbar-logo">
+      <img src="@/assets/logo.png" alt="Logo" />
     </div>
-    <div class="donate">
-      <button>Donate</button>
+    <div class="navbar-menu">
+      <ul class="navbar-nav">
+        <li class="home-underline" ><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/media">Media</a></li>
+        <li><a href="/contact">Contact</a></li>
+      </ul>
+      <div class="social-media">
+        <a href="https://www.instagram.com/mosnotesofficial/" target="_blank">
+          <FontAwesomeIcon class=icon-white :icon="['fab', 'instagram']" />
+        </a>
+        <a href="https://www.facebook.com/mosnotesofficial" target="_blank">
+          <FontAwesomeIcon class=icon-white :icon="['fab', 'facebook']" />
+        </a>
+        <a href="https://twitter.com/monotesofficial" target="_blank">
+          <FontAwesomeIcon class=icon-white :icon="['fab', 'twitter']" />
+        </a>
+      </div>
+      <div class="donate">
+        <button>Donate</button>
+      </div>
     </div>
   </nav>
 </template>
@@ -31,15 +42,34 @@
   padding: 1rem;
 }
 
+.navbar-logo img {
+  max-height: 150px;
+}
+
+.navbar-menu {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 .navbar-nav {
   list-style: none;
   display: flex;
   gap: 1rem;
+  margin: 0;
+  padding: 0;
 }
 
 .navbar-nav li a {
   text-decoration: none;
-  color: #000;
+  color: white;
+  font-size: 20px;
+}
+
+.home-underline {
+  color: white;
+  text-decoration: underline;
+  text-underline-offset: 10px;
 }
 
 .social-media {
@@ -51,10 +81,15 @@
   text-decoration: none;
 }
 
+.icon-white {
+  color: white;
+}
+
 .donate button {
+  font-size: 16px;
   background-color: orange;
   border: none;
-  padding: 0.5rem 1rem;
+  padding: 1rem 1.5rem;
   cursor: pointer;
 }
 
