@@ -148,8 +148,6 @@ REST_FRAMEWORK = {
     ),
 }
 
-AUTH_USER_MODEL = 'api.CustomUser'
-
 LOGIN_URL = '/api/login/'
 
 SESSION_COOKIE_HTTPONLY = False
