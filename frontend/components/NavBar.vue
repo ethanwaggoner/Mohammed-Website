@@ -9,11 +9,11 @@
     </div>
     <div class="navbar-menu">
       <ul class="navbar-nav">
-        <li class="home-underline" ><a href="/">Home</a></li>
-        <li><a href="/about">About</a></li>
-        <li><a href="/blog">Blog</a></li>
-        <li><a href="/media">Media</a></li>
-        <li><a href="/contact">Contact</a></li>
+        <li class="home-underline" ><NuxtLink to="/">Home</NuxtLink></li>
+        <li><NuxtLink to="/about">About</NuxtLink></li>
+        <li><NuxtLink to="/blog">Blog</NuxtLink></li>
+        <li><NuxtLink to="/media">Media</NuxtLink></li>
+        <li><NuxtLink to="/contact">Contact</NuxtLink></li>
       </ul>
       <div class="social-media">
         <a href="https://www.instagram.com/mosnotesofficial/" target="_blank">

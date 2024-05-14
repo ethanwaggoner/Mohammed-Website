@@ -4,18 +4,15 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
-
 from api.models.blog import Blog
 from api.serializers.blog import BlogSerializer
 
 logger = logging.getLogger(__name__)
 
-
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 6
     page_size_query_param = 'page_size'
     max_page_size = 100
-
 
 class BlogViewSet(viewsets.ModelViewSet):
     queryset = Blog.objects.all()

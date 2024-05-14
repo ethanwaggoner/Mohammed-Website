@@ -10,7 +10,7 @@ class BlogSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Blog
-        fields = ['id', 'title', 'body', 'like_count', 'comments', 'comments_count', 'created_at']
+        fields = ['id', 'title', 'body', 'image', 'like_count', 'comments', 'comments_count', 'created_at']
 
     def get_like_count(self, obj):
         return obj.likes.count()

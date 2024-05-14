@@ -3,4 +3,5 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: ["@pinia/nuxt"],
   plugins: ["~/plugins/fontawesome.js",],
+  css: ['@/assets/main.css'],
 });
