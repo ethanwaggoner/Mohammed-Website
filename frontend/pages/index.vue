@@ -30,6 +30,13 @@ const router = useRouter();
 const goToBlog = () => {
   router.push('/blog');
 };
+
+const getAbsoluteImageUrl = (relativeUrl) => {
+  if (relativeUrl.startsWith('http')) {
+    return relativeUrl;
+  }
+  return `http://127.0.0.1:8000${relativeUrl}`;
+};
 </script>
 
 <template>
@@ -48,7 +55,7 @@ const goToBlog = () => {
         v-for="(blog, index) in blogStore.blogs.slice(currentPage * itemsPerPage, currentPage * itemsPerPage + itemsPerPage)"
         :key="index"
       >
-        <img :src="blog.image" alt="Blog Image" />
+        <img :src="getAbsoluteImageUrl(blog.image)" alt="Blog Preview" />
         <p>{{ new Date(blog.created_at).toLocaleDateString() }}</p>
         <h2>{{ blog.title }}</h2>
       </div>
