@@ -1,13 +1,16 @@
+import axios from 'axios';
 import { parseCookies } from 'cookie';
+import { useNuxtApp } from '#app';
+import { useCookie } from '#imports';
 
-export default defineNuxtPlugin((nuxtApp) => {
-  const axios = nuxtApp.$axios.create({
-    baseURL: 'https://www.mohammedkhalid.com',
+export default function useAxios() {
+  const nuxtApp = useNuxtApp();
+  const axiosInstance = axios.create({
+    baseURL: 'http://127.0.0.1:8000',
     withCredentials: true,
   });
 
-  axios.interceptors.request.use((config) => {
-    // Conditionally handle SSR and client-side
+  axiosInstance.interceptors.request.use((config) => {
     if (process.server) {
       const req = nuxtApp.ssrContext.req;
       const cookies = parseCookies(req.headers.cookie);
@@ -16,7 +19,6 @@ export default defineNuxtPlugin((nuxtApp) => {
         config.headers['X-CSRFToken'] = csrfToken;
       }
     } else {
-      // Client-side handling with useCookie
       const csrfToken = useCookie('csrftoken').value;
       if (csrfToken) {
         config.headers['X-CSRFToken'] = csrfToken;
@@ -25,10 +27,10 @@ export default defineNuxtPlugin((nuxtApp) => {
     return config;
   });
 
-  axios.interceptors.response.use(
+  axiosInstance.interceptors.response.use(
     (response) => response,
     (error) => Promise.reject(error)
   );
 
-  nuxtApp.provide('axios', axios);
-});
+  return axiosInstance;
+}

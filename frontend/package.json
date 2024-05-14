@@ -16,6 +16,7 @@
     "@fortawesome/vue-fontawesome": "^3.0.6",
     "@nuxtjs/fontawesome": "^1.1.2",
     "@pinia/nuxt": "^0.5.1",
+    "axios": "^1.6.8",
     "cookie": "^0.6.0",
     "nuxt": "^3.11.1",
     "pinia": "^2.1.7",
