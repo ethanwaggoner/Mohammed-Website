@@ -6,7 +6,7 @@
 <template>
   <nav class="navbar">
     <div class="navbar-logo">
-      <img src="@/assets/logo.png" alt="Logo" />
+      <NuxtLink to="/"><img src="@/assets/logo.png" alt="Logo" /></NuxtLink>
     </div>
     <div class="navbar-menu">
       <ul class="navbar-nav">
@@ -27,9 +27,6 @@
           <FontAwesomeIcon class=icon-white :icon="['fab', 'twitter']" />
         </a>
       </div>
-      <div class="donate">
-        <button>Donate</button>
-      </div>
     </div>
   </nav>
 </template>
@@ -41,6 +38,7 @@
   align-items: center;
   background-color: transparent;
   padding: 1rem;
+  margin: 0 5% 0 5%;
 }
 
 .navbar-logo img {
@@ -84,14 +82,6 @@
 
 .icon-white {
   color: white;
-}
-
-.donate button {
-  font-size: 16px;
-  background-color: orange;
-  border: none;
-  padding: 1rem 1.5rem;
-  cursor: pointer;
 }
 
 </style>

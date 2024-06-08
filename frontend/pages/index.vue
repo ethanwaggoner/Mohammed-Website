@@ -80,36 +80,10 @@ const getAbsoluteImageUrl = (relativeUrl) => {
     <div class="overlay2">
       <h1>Mo’s Notes aims to unravel the complexities of our world.</h1>
       <p>Chronicling one person’s lived experiences.</p>
-      <button>Learn More</button>
+      <NuxtLink to="/about"><button>Learn More</button></NuxtLink>
     </div>
   </div>
-  <div class="navbar2">
-    <nav class="navigation">
-      <NuxtLink to="/blog">Blog</NuxtLink>
-      <NuxtLink to="/about">About</NuxtLink>
-      <NuxtLink to="/donate">Donate</NuxtLink>
-    </nav>
-    <div class="search-bar">
-      <input
-        type="text"
-        v-model="searchQuery"
-        @input="searchBlogs"
-        placeholder="Search"
-      />
-      <i class="fa fa-search"></i>
-    </div>
-    <div class="social-media">
-        <a href="https://www.instagram.com/mosnotesofficial/" target="_blank">
-          <FontAwesomeIcon class=icon-white :icon="['fab', 'instagram']" />
-        </a>
-        <a href="https://www.facebook.com/mosnotesofficial" target="_blank">
-          <FontAwesomeIcon class=icon-white :icon="['fab', 'facebook']" />
-        </a>
-        <a href="https://twitter.com/monotesofficial" target="_blank">
-          <FontAwesomeIcon class=icon-white :icon="['fab', 'twitter']" />
-        </a>
-      </div>
-  </div>
+  <BottomBar />
 </template>
 
 
@@ -150,6 +124,12 @@ button {
   padding: 20px 40px;
   font-size: 1.2em;
   cursor: pointer;
+  border-radius: 4px;
+}
+
+button:hover {
+  background-color: black;
+  color: white;
 }
 
 .carousel-container {
@@ -202,7 +182,7 @@ button {
   align-items: center;
   justify-content: center;
   height: 75vh;
-  background-color: #dda758; /* Background color matches the design */
+  background-color: #dda758;
 }
 
 .hero-section img {
@@ -224,7 +204,7 @@ button {
   z-index: 2;
   text-align: center;
   padding: 20px;
-  background-color: rgba(255, 193, 45, 0.8); /* Semi-transparent background for readability */
+  background-color: rgba(255, 193, 45, 0.8);
   max-width: 600px;
   border-radius: 10px;
 }
@@ -241,69 +221,7 @@ button {
   margin-bottom: 20px;
 }
 
-button {
-  background-color: black;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  font-size: 1em;
-  cursor: pointer;
-  border-radius: 5px;
-}
 
-button:hover {
-  background-color: darkorange;
-}
 
-.navbar2 {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 20px;
-}
-
-.navigation {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 20px;
-}
-
-.navigation a {
-  text-decoration: none;
-  color: black;
-  font-weight: bold;
-}
-
-.navigation a:hover {
-  text-decoration: underline;
-}
-
-.search-bar {
-  width: 50%;
-  border: 1px solid black;
-  padding: 5px;
-  margin-bottom: 20px;
-}
-
-.search-bar input {
-  border: none;
-  outline: none;
-}
-
-.search-bar .fa-search {
-  margin-left: 5px;
-}
-
-.social-media {
-  display: flex;
-  gap: 2rem;
-}
-
-.social-media a {
-  text-decoration: none;
-}
-.icon-white {
-  color: black;
-}
 
 </style>
