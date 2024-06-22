@@ -33,6 +33,8 @@ INSTALLED_APPS = [
     'api',
     'corsheaders',
     'sslserver',
+    'taggit',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
