@@ -71,7 +71,7 @@ import { ref } from 'vue';
 
 .navbar-nav li a {
   text-decoration: none;
-  color: white;
+  color: black;
   font-size: 20px;
 }
 
@@ -103,7 +103,7 @@ import { ref } from 'vue';
 }
 
 .home-underline {
-  color: white;
+  color: black;
   text-decoration: underline;
   text-underline-offset: 10px;
 }
@@ -118,6 +118,6 @@ import { ref } from 'vue';
 }
 
 .icon-white {
-  color: white;
+  color: black;
 }
 </style>
