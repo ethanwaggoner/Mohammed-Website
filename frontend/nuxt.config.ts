@@ -7,4 +7,5 @@ export default defineNuxtConfig({
       "~/plugins/axios.js",
   ],
   css: ['@/assets/main.css'],
+    ssr: true,
 });

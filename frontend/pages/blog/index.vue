@@ -1,12 +1,12 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
-import { useBlogStore } from '@/stores/blogStore';
+import { useBlogStore } from '~/stores/blogStore.js';
 import NavBar from "~/components/NavBar.vue";
 
 const blogStore = useBlogStore();
 const backgroundImage = ref('/images/background2.jpg');
 
-const blogs = computed(() => blogStore.getBlogs);
+let blogs = computed(() => blogStore.getBlogs);
 const allTags = computed(() => {
   const tagSet = new Set();
   blogs.value.forEach(blog => {
@@ -17,10 +17,17 @@ const allTags = computed(() => {
   return Array.from(tagSet);
 });
 
+const router = useRouter();
+
+const handleBlogClick = async (slug) => {
+  await blogStore.fetchBlogBySlug(slug);
+  await router.push(`/blog/${slug}`);
+};
+
 onMounted(async () => {
   console.log('Fetching blogs...');
   await blogStore.fetchBlogs();
-  console.log('Blogs:', blogs.value);
+  blogs = blogStore.getBlogs;
 });
 
 const handleTagSelect = async (tag) => {
@@ -84,9 +91,11 @@ const formatDate = (dateString) => {
       {{ blogStore.getError }}
     </div>
 
-    <div v-else-if="blogs.length > 0" class="blog-grid">
+     <div v-else-if="blogs.length > 0" class="blog-grid">
       <div v-for="blog in blogs" :key="blog.id" class="blog-item">
-        <img :src="blog.image" :alt="blog.title" />
+        <div @click="handleBlogClick(blog.slug)">
+          <img :src="blog.image" :alt="blog.title" />
+        </div>
         <div class="blog-content">
           <h2>{{ blog.title }}</h2>
           <p>{{ blog.excerpt }}</p>
@@ -98,15 +107,17 @@ const formatDate = (dateString) => {
                 :key="tag"
                 class="tag"
                 :class="{ 'selected': blogStore.getSelectedTags.includes(tag) }"
-                @click="handleTagSelect(tag)"
+                @click.stop="handleTagSelect(tag)"
               >
                 {{ tag }}
-              </span>
-            </div>
+                      </span>
           </div>
         </div>
       </div>
+      </div>
+
     </div>
+
 
     <div v-else class="no-blogs">
       <p>No blogs available.</p>

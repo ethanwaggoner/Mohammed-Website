@@ -1,0 +1,183 @@
+<script setup>
+import { ref, computed } from 'vue';
+import { useBlogStore } from '@/stores/blogStore';
+
+const blogStore = useBlogStore();
+const blog = computed(() => blogStore.currentBlog);
+
+const newComment = ref('');
+const authorName = ref('');
+
+const formatDate = (dateString) => {
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  return new Date(dateString).toLocaleDateString(undefined, options);
+};
+
+const submitComment = async () => {
+  if (newComment.value && authorName.value && blog.value) {
+    await blogStore.postComment(blog.value.id, {
+      body: newComment.value,
+      author: authorName.value
+    });
+    newComment.value = '';
+    authorName.value = '';
+  }
+};
+</script>
+
+<template>
+  <NavBarDark />
+  <div v-if="blogStore.isLoading" class="loading">
+    Loading...
+  </div>
+  <div v-else-if="blogStore.getError" class="error">
+    {{ blogStore.getError }}
+  </div>
+  <div v-else-if="blog" class="blog-detail">
+    <div class="tags">
+      <span v-for="tag in blog.tags" :key="tag" class="tag">{{ tag }}</span>
+    </div>
+    <h1>{{ blog.title }}</h1>
+    <img :src="blog.image" :alt="blog.title" />
+    <div v-html="blog.body"></div>
+    <div class="meta">
+      <p>Created at: {{ formatDate(blog.created_at) }}</p>
+    </div>
+
+    <!-- Comments Section -->
+    <div class="comments-section">
+      <h2>Comments ({{ blog.comments_count }})</h2>
+      <div class="comment-form">
+        <textarea v-model="newComment" placeholder="Write your comment here..."></textarea>
+        <input v-model="authorName" placeholder="Your Name" />
+        <button @click="submitComment" class="post-comment-btn">Post Comment</button>
+      </div>
+      <div class="comments-list">
+        <div v-for="comment in blog.comments" :key="comment.id" class="comment">
+          <p class="comment-body">{{ comment.body }}</p>
+          <p class="comment-meta">
+            By {{ comment.author }} on {{ formatDate(comment.created_at) }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div v-else class="no-blog">
+    <p>Blog post not found.</p>
+  </div>
+  <BottomBar />
+</template>
+
+<style scoped>
+.blog-detail {
+  max-width: 80%;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.tags {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.tag {
+  background-color: #f0f0f0;
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 0.9em;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.blog-detail img {
+  display: block;
+  width: 100%;
+  max-width: 600px;
+  height: 400px;
+  object-fit: cover;
+  margin: 0 auto;
+}
+
+.meta {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.comments-section {
+  margin-top: 40px;
+}
+
+.comment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.comment-form textarea, .comment-form input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.post-comment-btn {
+  align-self: flex-end;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.comment {
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 4px;
+}
+
+.comment-body {
+  margin-bottom: 10px;
+}
+
+.comment-meta {
+  font-size: 0.8em;
+  color: #666;
+}
+
+.loading, .error, .no-blog {
+  text-align: center;
+  margin: 20px 0;
+  font-size: 1.2rem;
+}
+
+.error {
+  color: red;
+}
+
+:deep(p) {
+  margin-bottom: 1em;
+}
+
+:deep(h2) {
+  margin-top: 1.5em;
+}
+
+:deep(ul, ol) {
+  margin-left: 2em;
+  margin-bottom: 1em;
+}
+</style>
