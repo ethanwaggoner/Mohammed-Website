@@ -67,7 +67,7 @@ export const useBlogStore = defineStore('blog', {
       }
       await this.fetchBlogs(1);
     },
-        async postComment(blogSlug, commentData) {
+    async postComment(blogSlug, commentData) {
       const { $axios } = useNuxtApp();
       try {
         const response = await $axios.post(`/api/comments/`, {

@@ -1,44 +1,61 @@
 <script setup>
-import { ref, computed } from 'vue';
-import { useBlogStore } from '@/stores/blogStore';
+import {ref, computed, onMounted} from 'vue';
+import {useBlogStore} from '@/stores/blogStore';
+import {useRouter, useRoute} from 'vue-router';
+import NavBarDark from '@/components/NavBarDark.vue';
+import BottomBar from '@/components/BottomBar.vue';
 
 const blogStore = useBlogStore();
+const route = useRoute();
+const slug = route.params.slug;
 const blog = computed(() => blogStore.currentBlog);
 
 const newComment = ref('');
 const authorName = ref('');
+const errorMessage = ref('');
 
 const formatDate = (dateString) => {
-  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  const options = {year: 'numeric', month: 'long', day: 'numeric'};
   return new Date(dateString).toLocaleDateString(undefined, options);
 };
 
 const submitComment = async () => {
   if (newComment.value && authorName.value && blog.value) {
-    await blogStore.postComment(blog.value.id, {
-      body: newComment.value,
-      author: authorName.value
-    });
-    newComment.value = '';
-    authorName.value = '';
+    try {
+      await blogStore.postComment(blog.value.slug, {
+        body: newComment.value,
+        author: authorName.value
+      });
+      newComment.value = '';
+      authorName.value = '';
+      errorMessage.value = '';
+    } catch (error) {
+      errorMessage.value = error.response?.data?.detail || 'Failed to submit comment';
+    }
   }
 };
+
+const fetchBlog = async () => {
+  await blogStore.fetchBlogBySlug(slug);
+};
+
+onMounted(fetchBlog);
 </script>
 
 <template>
-  <NavBarDark />
+  <NavBarDark/>
   <div v-if="blogStore.isLoading" class="loading">
     Loading...
   </div>
-  <div v-else-if="blogStore.getError" class="error">
-    {{ blogStore.getError }}
+  <div v-else-if="blogStore.error" class="error">
+    {{ blogStore.error }}
   </div>
   <div v-else-if="blog" class="blog-detail">
     <div class="tags">
       <span v-for="tag in blog.tags" :key="tag" class="tag">{{ tag }}</span>
     </div>
     <h1>{{ blog.title }}</h1>
-    <img :src="blog.image" :alt="blog.title" />
+    <img :src="blog.image" :alt="blog.title"/>
     <div v-html="blog.body"></div>
     <div class="meta">
       <p>Created at: {{ formatDate(blog.created_at) }}</p>
@@ -49,8 +66,9 @@ const submitComment = async () => {
       <h2>Comments ({{ blog.comments_count }})</h2>
       <div class="comment-form">
         <textarea v-model="newComment" placeholder="Write your comment here..."></textarea>
-        <input v-model="authorName" placeholder="Your Name" />
+        <input v-model="authorName" placeholder="Your Name"/>
         <button @click="submitComment" class="post-comment-btn">Post Comment</button>
+        <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
       </div>
       <div class="comments-list">
         <div v-for="comment in blog.comments" :key="comment.id" class="comment">
@@ -66,7 +84,7 @@ const submitComment = async () => {
   <div v-else class="no-blog">
     <p>Blog post not found.</p>
   </div>
-  <BottomBar />
+  <BottomBar/>
 </template>
 
 <style scoped>
