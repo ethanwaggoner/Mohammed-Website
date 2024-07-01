@@ -11,7 +11,7 @@ class BlogSerializer(TaggitSerializer, serializers.ModelSerializer):
 
     class Meta:
         model = Blog
-        fields = ['id', 'title', 'slug', 'body', 'image', 'like_count', 'comments', 'comments_count', 'created_at', 'tags']
+        fields = ['id', 'title', 'slug', 'body', 'image', 'like_count', 'comments', 'comments_count', 'created_at', 'tags', 'restricted',]
 
     def get_like_count(self, obj):
         return obj.likes.count()

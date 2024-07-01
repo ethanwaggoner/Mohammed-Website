@@ -8,9 +8,8 @@ from api.models.comment import Comment
 from api.serializers.blog import BlogSerializer
 from api.serializers.comment import CommentSerializer
 
-
 class BlogViewSet(viewsets.ModelViewSet):
-    queryset = Blog.objects.all()
+    queryset = Blog.objects.filter(restricted=False)  # Explicitly define queryset here
     serializer_class = BlogSerializer
     lookup_field = 'slug'
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
@@ -19,7 +18,7 @@ class BlogViewSet(viewsets.ModelViewSet):
     ordering_fields = ['created_at', 'title']
 
     def get_queryset(self):
-        queryset = Blog.objects.prefetch_related('comments', 'tags').all()
+        queryset = Blog.objects.prefetch_related('comments', 'tags').filter(restricted=False)
         tags = self.request.query_params.get('tags')
         if tags:
             tag_list = tags.split(',')

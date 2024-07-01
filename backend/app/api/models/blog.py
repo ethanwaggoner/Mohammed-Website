@@ -13,6 +13,7 @@ class Blog(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_blogs', blank=True)
     tags = TaggableManager(blank=True)
+    restricted = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title
