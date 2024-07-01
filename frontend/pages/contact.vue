@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { reactive } from 'vue'
+import axios from 'axios'
+import {useNuxtApp} from "#app";
 
 const form = reactive({
   firstName: '',
@@ -8,9 +10,16 @@ const form = reactive({
   subject: '',
   message: ''
 })
-
-const submitForm = () => {
-  console.log('Form submitted:', form)
+const { $axios } = useNuxtApp();
+const submitForm = async () => {
+  try {
+    const response = await $axios.post('/api/contact/send/', form)
+    console.log('Form submitted:', response.data)
+    alert('Email sent successfully')
+  } catch (error) {
+    console.error('Error submitting form:', error)
+    alert('There was an error sending your email.')
+  }
 }
 </script>
 
