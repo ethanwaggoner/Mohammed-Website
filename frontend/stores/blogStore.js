@@ -50,13 +50,43 @@ export const useBlogStore = defineStore('blog', {
         const response = await $axios.get(`/api/blogs/${slug}/`);
         console.log('Blog fetched:', response.data);
         this.currentBlog = response.data;
+        await this.fetchBlogComments(slug);
         console.log('Current blog set:', this.currentBlog);
       } catch (error) {
         console.error('Error fetching blog:', error);
-        this.error = error.response?.data?.detail } finally {
+        this.error = error.response?.data?.detail;
+      } finally {
         this.loading = false;
       }
     },
+
+    async fetchBlogComments(blogSlug) {
+  const { $axios } = useNuxtApp();
+  try {
+    const response = await $axios.get(`/api/blogs/${blogSlug}/comments/`);
+    const comments = response.data;
+
+    // Create a map of comments by their IDs
+    const commentMap = new Map(comments.map(c => [c.id, {...c, replies: []}]));
+
+    // Organize comments into a tree structure
+    const rootComments = [];
+    comments.forEach(comment => {
+      if (comment.parent_id) {
+        const parent = commentMap.get(comment.parent_id);
+        if (parent) {
+          parent.replies.push(commentMap.get(comment.id));
+        }
+      } else {
+        rootComments.push(commentMap.get(comment.id));
+      }
+    });
+
+    this.currentBlog.comments = rootComments;
+  } catch (error) {
+    console.error('Error fetching comments:', error);
+  }
+},
 
     async toggleTag(tag) {
       const index = this.selectedTags.indexOf(tag);
@@ -67,23 +97,59 @@ export const useBlogStore = defineStore('blog', {
       }
       await this.fetchBlogs(1);
     },
-    async postComment(blogSlug, commentData) {
-      const { $axios } = useNuxtApp();
-      try {
-        const response = await $axios.post(`/api/comments/`, {
-          ...commentData,
-          blog_slug: blogSlug
-        });
-        if (this.currentBlog) {
-          this.currentBlog.comments.push(response.data);
-          this.currentBlog.comments_count += 1;
-        } else {
-          console.warn('Current blog not set.');
-        }
-      } catch (error) {
-        console.error('Error posting comment:', error);
-      }
-    }
 
+    async postComment(blogSlug, commentData) {
+  const { $axios } = useNuxtApp();
+  try {
+    const response = await $axios.post(`/api/comments/`, {
+      blog_slug: blogSlug,
+      ...commentData
+    });
+    if (this.currentBlog) {
+      const newComment = response.data;
+      if (newComment.parent_id) {
+        // Find the parent comment and add the reply
+        const addReply = (comments) => {
+          for (let comment of comments) {
+            if (comment.id === newComment.parent_id) {
+              if (!comment.replies) comment.replies = [];
+              comment.replies.push(newComment);
+              return true;
+            }
+            if (comment.replies && addReply(comment.replies)) {
+              return true;
+            }
+          }
+          return false;
+        };
+        addReply(this.currentBlog.comments);
+      } else {
+        // Add as a top-level comment
+        this.currentBlog.comments.push(newComment);
+      }
+      this.currentBlog.comments_count += 1;
+    } else {
+      console.warn('Current blog not set.');
+    }
+    return response.data;
+  } catch (error) {
+    console.error('Error posting comment:', error);
+    throw error;
+  }
+},
+
+    findCommentById(commentId) {
+      const findInComments = (comments) => {
+        for (let comment of comments) {
+          if (comment.id === commentId) return comment;
+          if (comment.replies) {
+            const found = findInComments(comment.replies);
+            if (found) return found;
+          }
+        }
+        return null;
+      };
+      return findInComments(this.currentBlog.comments);
+    }
   },
 });

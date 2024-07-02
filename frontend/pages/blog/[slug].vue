@@ -4,6 +4,7 @@ import {useBlogStore} from '@/stores/blogStore';
 import {useRouter, useRoute} from 'vue-router';
 import NavBarDark from '@/components/NavBarDark.vue';
 import BottomBar from '@/components/BottomBar.vue';
+import Comment from '@/components/Comment.vue';
 
 const blogStore = useBlogStore();
 const route = useRoute();
@@ -39,9 +40,16 @@ const fetchBlog = async () => {
   await blogStore.fetchBlogBySlug(slug);
 };
 
+const handleReply = async (replyData) => {
+  try {
+    await blogStore.postComment(blog.value.slug, replyData);
+  } catch (error) {
+    console.error('Failed to post reply', error);
+  }
+};
+
 onMounted(fetchBlog);
 </script>
-
 <template>
   <NavBarDark/>
   <div v-if="blogStore.isLoading" class="loading">
@@ -61,26 +69,20 @@ onMounted(fetchBlog);
       <p>Created at: {{ formatDate(blog.created_at) }}</p>
     </div>
 
-    <!-- Comments Section -->
-    <div class="comments-section">
-      <h2>Comments ({{ blog.comments_count }})</h2>
-      <div class="comment-form">
-        <textarea v-model="newComment" placeholder="Write your comment here..."></textarea>
-        <input v-model="authorName" placeholder="Your Name"/>
-        <button @click="submitComment" class="post-comment-btn">Post Comment</button>
-        <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
-      </div>
-      <div class="comments-list">
-        <div v-for="comment in blog.comments" :key="comment.id" class="comment">
-          <p class="comment-body">{{ comment.body }}</p>
-          <p class="comment-meta">
-            By {{ comment.author }} on {{ formatDate(comment.created_at) }}
-          </p>
+       <div class="comments-section">
+        <h2>Comments ({{ blog.comments_count }})</h2>
+        <div class="comment-form">
+          <textarea v-model="newComment" placeholder="Write your comment here..."></textarea>
+          <input v-model="authorName" placeholder="Your Name"/>
+          <button @click="submitComment" class="post-comment-btn">Post Comment</button>
+          <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+        </div>
+        <div class="comments-list">
+          <Comment v-for="comment in blog.comments" :key="comment.id" :comment="comment" :blogSlug="blog.slug" @reply="handleReply"/>
         </div>
       </div>
-    </div>
-  </div>
 
+    </div>
   <div v-else class="no-blog">
     <p>Blog post not found.</p>
   </div>

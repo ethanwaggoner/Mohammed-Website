@@ -20,20 +20,15 @@ class CommentViewSet(viewsets.ModelViewSet):
             return Response({'detail': 'Blog slug is required.'}, status=status.HTTP_400_BAD_REQUEST)
 
         blog = get_object_or_404(Blog, slug=blog_slug)
-        serializer = CommentSerializer(data=request.data)
 
-        if serializer.is_valid():
-            try:
-                author_name = request.data.get('author_name')
-                comment_body = request.data.get('body')
-                if is_spam(author_name, comment_body):
-                    return Response({'detail': 'Comment contains spam.'}, status=status.HTTP_400_BAD_REQUEST)
-
-                serializer.save(blog=blog)
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            except Exception as e:
-                logger.error(f"Error in creating a comment: {e}", exc_info=True)
-                return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        parent_id = request.data.get('parent_id')
+        if parent_id:
+            parent = get_object_or_404(Comment, id=parent_id, blog=blog)
         else:
-            logger.warning(f"Validation errors in creating a comment: {serializer.errors}")
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            parent = None
+
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(blog=blog, parent=parent)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
