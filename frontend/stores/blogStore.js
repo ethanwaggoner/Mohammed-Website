@@ -99,44 +99,42 @@ export const useBlogStore = defineStore('blog', {
     },
 
     async postComment(blogSlug, commentData) {
-  const { $axios } = useNuxtApp();
-  try {
-    const response = await $axios.post(`/api/comments/`, {
-      blog_slug: blogSlug,
-      ...commentData
-    });
-    if (this.currentBlog) {
-      const newComment = response.data;
-      if (newComment.parent_id) {
-        // Find the parent comment and add the reply
-        const addReply = (comments) => {
-          for (let comment of comments) {
-            if (comment.id === newComment.parent_id) {
-              if (!comment.replies) comment.replies = [];
-              comment.replies.push(newComment);
-              return true;
-            }
-            if (comment.replies && addReply(comment.replies)) {
-              return true;
-            }
+      const { $axios } = useNuxtApp();
+      try {
+        const response = await $axios.post(`/api/comments/`, {
+          blog_slug: blogSlug,
+          ...commentData
+        });
+        if (this.currentBlog) {
+          const newComment = response.data;
+          if (newComment.parent_id) {
+            const addReply = (comments) => {
+              for (let comment of comments) {
+                if (comment.id === newComment.parent_id) {
+                  if (!comment.replies) comment.replies = [];
+                  comment.replies.push(newComment);
+                  return true;
+                }
+                if (comment.replies && addReply(comment.replies)) {
+                  return true;
+                }
+              }
+              return false;
+            };
+            addReply(this.currentBlog.comments);
+          } else {
+            this.currentBlog.comments.push(newComment);
           }
-          return false;
-        };
-        addReply(this.currentBlog.comments);
-      } else {
-        // Add as a top-level comment
-        this.currentBlog.comments.push(newComment);
+          this.currentBlog.comments_count += 1;
+        } else {
+          console.warn('Current blog not set.');
+        }
+        return response.data;
+      } catch (error) {
+        console.error('Error posting comment:', error);
+        throw error;
       }
-      this.currentBlog.comments_count += 1;
-    } else {
-      console.warn('Current blog not set.');
-    }
-    return response.data;
-  } catch (error) {
-    console.error('Error posting comment:', error);
-    throw error;
-  }
-},
+    },
 
     findCommentById(commentId) {
       const findInComments = (comments) => {

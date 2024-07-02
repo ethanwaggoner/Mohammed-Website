@@ -53,7 +53,7 @@ const nestedComments = computed(() => props.comment.replies || []);
 </script>
 
 <template>
-  <div class="comment" :style="{ marginLeft: `${props.nestedLevel * 20}px` }">
+  <div class="comment" :class="{ 'admin-reply': comment.is_admin_reply }" :style="{ marginLeft: `${props.nestedLevel * 20}px` }">
     <p class="comment-body">{{ comment.body }}</p>
     <p class="comment-meta">
       By {{ comment.author }} on {{ formatDate(comment.created_at) }}
@@ -67,12 +67,12 @@ const nestedComments = computed(() => props.comment.replies || []);
     </div>
     <div v-if="nestedComments.length > 0" class="nested-comments">
       <Comment
-          v-for="nestedComment in nestedComments"
-          :key="nestedComment.id"
-          :comment="nestedComment"
-          :blogSlug="blogSlug"
-          :nestedLevel="props.nestedLevel + 1"
-          @reply="$emit('reply', $event)"
+        v-for="nestedComment in nestedComments"
+        :key="nestedComment.id"
+        :comment="nestedComment"
+        :blogSlug="blogSlug"
+        :nestedLevel="props.nestedLevel + 1"
+        @reply="$emit('reply', $event)"
       />
     </div>
   </div>
@@ -84,6 +84,12 @@ const nestedComments = computed(() => props.comment.replies || []);
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
+}
+
+.admin-reply {
+  background-color: #f0f0f0;
+  border-left: 5px solid #d9534f;
+  padding: 10px;
 }
 
 .comment-body {

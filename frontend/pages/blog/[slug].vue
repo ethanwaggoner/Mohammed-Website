@@ -1,7 +1,7 @@
 <script setup>
-import {ref, computed, onMounted} from 'vue';
-import {useBlogStore} from '@/stores/blogStore';
-import {useRouter, useRoute} from 'vue-router';
+import { ref, computed, onMounted } from 'vue';
+import { useBlogStore } from '@/stores/blogStore';
+import { useRouter, useRoute } from 'vue-router';
 import NavBarDark from '@/components/NavBarDark.vue';
 import BottomBar from '@/components/BottomBar.vue';
 import Comment from '@/components/Comment.vue';
@@ -16,7 +16,7 @@ const authorName = ref('');
 const errorMessage = ref('');
 
 const formatDate = (dateString) => {
-  const options = {year: 'numeric', month: 'long', day: 'numeric'};
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
   return new Date(dateString).toLocaleDateString(undefined, options);
 };
 
@@ -50,6 +50,7 @@ const handleReply = async (replyData) => {
 
 onMounted(fetchBlog);
 </script>
+
 <template>
   <NavBarDark/>
   <div v-if="blogStore.isLoading" class="loading">
@@ -69,20 +70,20 @@ onMounted(fetchBlog);
       <p>Created at: {{ formatDate(blog.created_at) }}</p>
     </div>
 
-       <div class="comments-section">
-        <h2>Comments ({{ blog.comments_count }})</h2>
-        <div class="comment-form">
-          <textarea v-model="newComment" placeholder="Write your comment here..."></textarea>
-          <input v-model="authorName" placeholder="Your Name"/>
-          <button @click="submitComment" class="post-comment-btn">Post Comment</button>
-          <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
-        </div>
-        <div class="comments-list">
-          <Comment v-for="comment in blog.comments" :key="comment.id" :comment="comment" :blogSlug="blog.slug" @reply="handleReply"/>
-        </div>
+    <div class="comments-section">
+      <h2>Comments ({{ blog.comments_count }})</h2>
+      <div class="comment-form">
+        <textarea v-model="newComment" placeholder="Write your comment here..."></textarea>
+        <input v-model="authorName" placeholder="Your Name"/>
+        <button @click="submitComment" class="post-comment-btn">Post Comment</button>
+        <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
       </div>
-
+      <div class="comments-list">
+        <Comment v-for="comment in blog.comments" :key="comment.id" :comment="comment" :blogSlug="blog.slug" @reply="handleReply"/>
+      </div>
     </div>
+
+  </div>
   <div v-else class="no-blog">
     <p>Blog post not found.</p>
   </div>
@@ -161,21 +162,6 @@ h1 {
   display: flex;
   flex-direction: column;
   gap: 20px;
-}
-
-.comment {
-  background-color: #f9f9f9;
-  padding: 15px;
-  border-radius: 4px;
-}
-
-.comment-body {
-  margin-bottom: 10px;
-}
-
-.comment-meta {
-  font-size: 0.8em;
-  color: #666;
 }
 
 .loading, .error, .no-blog {
