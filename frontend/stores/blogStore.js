@@ -87,7 +87,6 @@ export const useBlogStore = defineStore('blog', {
     console.error('Error fetching comments:', error);
   }
 },
-
     async toggleTag(tag) {
       const index = this.selectedTags.indexOf(tag);
       if (index > -1) {

@@ -1,7 +1,6 @@
 from django.contrib import admin
 from api.models.blog import Blog
 from api.models.comment import Comment
-from api.models.likes import CommentLike
 from django.db import models
 
 class BlogAdmin(admin.ModelAdmin):
@@ -9,8 +8,7 @@ class BlogAdmin(admin.ModelAdmin):
     list_display = ('title', 'created_at')
     search_fields = ('title', 'body')
 
-from django.contrib import admin
-from api.models.comment import Comment
+
 
 class ReplyInline(admin.StackedInline):
     model = Comment
@@ -31,4 +29,3 @@ class CommentAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Blog, BlogAdmin)
-admin.site.register(CommentLike)

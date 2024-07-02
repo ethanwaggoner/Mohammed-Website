@@ -29,6 +29,11 @@ class CommentViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
+            content = serializer.validated_data.get('content', '')
+            author = serializer.validated_data.get('author', '')
+            if is_spam(content, author):
+                return Response({'detail': 'Comment detected as spam.'}, status=status.HTTP_400_BAD_REQUEST)
+
             serializer.save(blog=blog, parent=parent)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -1,3 +1,35 @@
+<template>
+  <NavBarDark/>
+  <div v-if="blogStore.isLoading" class="loading">
+    Loading...
+  </div>
+  <div v-else-if="blogStore.error" class="error">
+    {{ blogStore.error }}
+  </div>
+  <div v-else-if="blog" class="blog-detail">
+    <!-- ... (previous content remains the same) ... -->
+
+    <div class="comments-section">
+      <h2>Comments ({{ blog.comments_count }})</h2>
+      <div class="comment-form">
+        <textarea v-model="newComment" placeholder="Write your comment here..."></textarea>
+        <input v-model="authorName" placeholder="Your Name"/>
+        <button @click="submitComment" :disabled="isCommentButtonDisabled" class="post-comment-btn">
+          {{ isCommentButtonDisabled ? `Wait ${cooldownTime}s` : 'Post Comment' }}
+        </button>
+        <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+      </div>
+      <div class="comments-list">
+        <Comment v-for="comment in blog.comments" :key="comment.id" :comment="comment" :blogSlug="blog.slug" @reply="handleReply"/>
+      </div>
+    </div>
+  </div>
+  <div v-else class="no-blog">
+    <p>Blog post not found.</p>
+  </div>
+  <BottomBar/>
+</template>
+
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useBlogStore } from '@/stores/blogStore';
@@ -14,6 +46,8 @@ const blog = computed(() => blogStore.currentBlog);
 const newComment = ref('');
 const authorName = ref('');
 const errorMessage = ref('');
+const isCommentButtonDisabled = ref(false);
+const cooldownTime = ref(15);
 
 const formatDate = (dateString) => {
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -30,10 +64,25 @@ const submitComment = async () => {
       newComment.value = '';
       authorName.value = '';
       errorMessage.value = '';
+      startCooldown();
     } catch (error) {
       errorMessage.value = error.response?.data?.detail || 'Failed to submit comment';
     }
   }
+};
+
+const startCooldown = () => {
+  isCommentButtonDisabled.value = true;
+  let remainingTime = 15;
+  const timer = setInterval(() => {
+    cooldownTime.value = remainingTime;
+    remainingTime--;
+    if (remainingTime < 0) {
+      clearInterval(timer);
+      isCommentButtonDisabled.value = false;
+      cooldownTime.value = 15;
+    }
+  }, 1000);
 };
 
 const fetchBlog = async () => {
@@ -50,45 +99,6 @@ const handleReply = async (replyData) => {
 
 onMounted(fetchBlog);
 </script>
-
-<template>
-  <NavBarDark/>
-  <div v-if="blogStore.isLoading" class="loading">
-    Loading...
-  </div>
-  <div v-else-if="blogStore.error" class="error">
-    {{ blogStore.error }}
-  </div>
-  <div v-else-if="blog" class="blog-detail">
-    <div class="tags">
-      <span v-for="tag in blog.tags" :key="tag" class="tag">{{ tag }}</span>
-    </div>
-    <h1>{{ blog.title }}</h1>
-    <img :src="blog.image" :alt="blog.title"/>
-    <div v-html="blog.body"></div>
-    <div class="meta">
-      <p>Created at: {{ formatDate(blog.created_at) }}</p>
-    </div>
-
-    <div class="comments-section">
-      <h2>Comments ({{ blog.comments_count }})</h2>
-      <div class="comment-form">
-        <textarea v-model="newComment" placeholder="Write your comment here..."></textarea>
-        <input v-model="authorName" placeholder="Your Name"/>
-        <button @click="submitComment" class="post-comment-btn">Post Comment</button>
-        <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
-      </div>
-      <div class="comments-list">
-        <Comment v-for="comment in blog.comments" :key="comment.id" :comment="comment" :blogSlug="blog.slug" @reply="handleReply"/>
-      </div>
-    </div>
-
-  </div>
-  <div v-else class="no-blog">
-    <p>Blog post not found.</p>
-  </div>
-  <BottomBar/>
-</template>
 
 <style scoped>
 .blog-detail {

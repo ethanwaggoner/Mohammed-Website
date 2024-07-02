@@ -1,3 +1,31 @@
+<template>
+  <div class="comment" :class="{ 'admin-reply': comment.is_admin_reply }" :style="{ marginLeft: `${props.nestedLevel * 20}px` }">
+    <p class="comment-body">{{ comment.body }}</p>
+    <p class="comment-meta">
+      By {{ comment.author }} on {{ formatDate(comment.created_at) }}
+    </p>
+    <button @click="toggleReplyForm" class="reply-btn">Reply</button>
+    <div v-if="showReplyForm" class="reply-form">
+      <textarea v-model="replyBody" placeholder="Write your reply here..."></textarea>
+      <input v-model="replyAuthor" placeholder="Your Name"/>
+      <button @click="submitReply" :disabled="isReplyButtonDisabled" class="post-reply-btn">
+        {{ isReplyButtonDisabled ? `Wait ${cooldownTime}s` : 'Post Reply' }}
+      </button>
+      <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+    </div>
+    <div v-if="nestedComments.length > 0" class="nested-comments">
+      <Comment
+        v-for="nestedComment in nestedComments"
+        :key="nestedComment.id"
+        :comment="nestedComment"
+        :blogSlug="blogSlug"
+        :nestedLevel="props.nestedLevel + 1"
+        @reply="$emit('reply', $event)"
+      />
+    </div>
+  </div>
+</template>
+
 <script setup>
 import { ref, computed } from 'vue';
 import { useBlogStore } from '@/stores/blogStore';
@@ -19,6 +47,8 @@ const replyBody = ref('');
 const replyAuthor = ref('');
 const errorMessage = ref('');
 const showReplyForm = ref(false);
+const isReplyButtonDisabled = ref(false);
+const cooldownTime = ref(15);
 
 const formatDate = (dateString) => {
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -41,6 +71,7 @@ const submitReply = async () => {
       replyAuthor.value = '';
       errorMessage.value = '';
       showReplyForm.value = false;
+      startCooldown();
     } catch (error) {
       errorMessage.value = 'Error posting reply: ' + error.message;
     }
@@ -49,35 +80,22 @@ const submitReply = async () => {
   }
 };
 
+const startCooldown = () => {
+  isReplyButtonDisabled.value = true;
+  let remainingTime = 15;
+  const timer = setInterval(() => {
+    cooldownTime.value = remainingTime;
+    remainingTime--;
+    if (remainingTime < 0) {
+      clearInterval(timer);
+      isReplyButtonDisabled.value = false;
+      cooldownTime.value = 15;
+    }
+  }, 1000);
+};
+
 const nestedComments = computed(() => props.comment.replies || []);
 </script>
-
-<template>
-  <div class="comment" :class="{ 'admin-reply': comment.is_admin_reply }" :style="{ marginLeft: `${props.nestedLevel * 20}px` }">
-    <p class="comment-body">{{ comment.body }}</p>
-    <p class="comment-meta">
-      By {{ comment.author }} on {{ formatDate(comment.created_at) }}
-    </p>
-    <button @click="toggleReplyForm" class="reply-btn">Reply</button>
-    <div v-if="showReplyForm" class="reply-form">
-      <textarea v-model="replyBody" placeholder="Write your reply here..."></textarea>
-      <input v-model="replyAuthor" placeholder="Your Name"/>
-      <button @click="submitReply" class="post-reply-btn">Post Reply</button>
-      <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
-    </div>
-    <div v-if="nestedComments.length > 0" class="nested-comments">
-      <Comment
-        v-for="nestedComment in nestedComments"
-        :key="nestedComment.id"
-        :comment="nestedComment"
-        :blogSlug="blogSlug"
-        :nestedLevel="props.nestedLevel + 1"
-        @reply="$emit('reply', $event)"
-      />
-    </div>
-  </div>
-</template>
-
 <style scoped>
 .comment {
   margin-bottom: 20px;
