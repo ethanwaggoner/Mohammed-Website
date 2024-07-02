@@ -82,7 +82,7 @@ import image6 from '@/assets/images/education6.png';
 
 .gallery-item {
   position: relative;
-  width: 100%; /
+  width: 100%;
   padding-bottom: 66.66%;
 }
 
