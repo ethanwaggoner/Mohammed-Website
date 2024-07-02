@@ -76,7 +76,7 @@ const getAbsoluteImageUrl = (relativeUrl) => {
     <button @click="next" class="carousel-control next">&gt;</button>
   </div>
   <div class="hero-section">
-    <img src="@/assets/homepagePrayer.png" class="hero-background" alt="Hero Background" />
+    <img src="../assets/images/homepagePrayer.png" class="hero-background" alt="Hero Background" />
     <div class="overlay2">
       <h1>Mo’s Notes aims to unravel the complexities of our world.</h1>
       <p>Chronicling one person’s lived experiences.</p>
@@ -89,7 +89,7 @@ const getAbsoluteImageUrl = (relativeUrl) => {
 
 <style scoped>
 .background-image {
-  background-image: url('@/assets/homepageMohammed.jpg');
+  background-image: url('../assets/images/homepageMohammed.jpg');
   background-size: cover;
   background-position: center;
   height: 100vh;

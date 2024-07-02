@@ -31,7 +31,7 @@ import BottomBar from "~/components/BottomBar.vue";
     </div>
   </div>
     <div class="additional-section">
-      <img src="@/assets/aboutSelfie.jpg" alt="Mohammed Khalid" class="profile-image">
+      <img src="../assets/images/aboutSelfie.jpg" alt="Mohammed Khalid" class="profile-image">
       <div class="additional-content">
         <p>
           Mohammed works from Washington, DC and is available to travel for speaking engagements.

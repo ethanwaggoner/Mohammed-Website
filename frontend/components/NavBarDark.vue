@@ -5,7 +5,7 @@ import { ref } from 'vue';
 <template>
   <nav class="navbar">
     <div class="navbar-logo">
-      <NuxtLink to="/"><img src="@/assets/logo.png" alt="Logo" /></NuxtLink>
+      <NuxtLink to="/"><img src="../assets/images/logo.png" alt="Logo" /></NuxtLink>
     </div>
     <div class="navbar-menu">
       <ul class="navbar-nav">

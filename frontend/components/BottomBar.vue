@@ -24,15 +24,6 @@ const searchBlogs = () => {
       <NuxtLink to="/blog">Blog</NuxtLink>
       <NuxtLink to="/about">About</NuxtLink>
     </nav>
-    <div class="search-bar">
-      <input
-        type="text"
-        v-model="searchQuery"
-        @input="searchBlogs"
-        placeholder="Search"
-      />
-      <i class="fa fa-search"></i>
-    </div>
     <div class="social-media">
         <a href="https://www.instagram.com/mosnotesofficial/" target="_blank">
           <FontAwesomeIcon class=icon-white :icon="['fab', 'instagram']" />
