@@ -65,7 +65,7 @@ import image6 from '@/assets/images/education6.png';
   max-width: 800px;
   text-align: center;
   font-family: 'Times New Roman', Times, serif;
-  font-size: 1.2em;
+  font-size: 2em;
   line-height: 1.6;
 }
 
@@ -115,6 +115,7 @@ import image6 from '@/assets/images/education6.png';
   align-items: center;
   text-align: center;
   padding: 1em;
+  font-size: 1.5em;
 }
 
 .gallery-item:hover .overlay {
