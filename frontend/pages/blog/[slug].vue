@@ -7,16 +7,21 @@
     {{ blogStore.error }}
   </div>
   <div v-else-if="blog" class="blog-detail">
-    <!-- ... (previous content remains the same) ... -->
-
+    <div class="tags">
+      <span v-for="tag in blog.tags" :key="tag" class="tag">{{ tag }}</span>
+    </div>
+    <h1>{{ blog.title }}</h1>
+    <img :src="blog.image" :alt="blog.title"/>
+    <div v-html="blog.body"></div>
+    <div class="meta">
+      <p>Created at: {{ formatDate(blog.created_at) }}</p>
+    </div>
     <div class="comments-section">
       <h2>Comments ({{ blog.comments_count }})</h2>
       <div class="comment-form">
         <textarea v-model="newComment" placeholder="Write your comment here..."></textarea>
         <input v-model="authorName" placeholder="Your Name"/>
-        <button @click="submitComment" :disabled="isCommentButtonDisabled" class="post-comment-btn">
-          {{ isCommentButtonDisabled ? `Wait ${cooldownTime}s` : 'Post Comment' }}
-        </button>
+        <button @click="submitComment" class="post-comment-btn">Post Comment</button>
         <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
       </div>
       <div class="comments-list">
@@ -30,7 +35,8 @@
   <BottomBar/>
 </template>
 
-<script setup>
+
+<script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useBlogStore } from '@/stores/blogStore';
 import { useRouter, useRoute } from 'vue-router';
