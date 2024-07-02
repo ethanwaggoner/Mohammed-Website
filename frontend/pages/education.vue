@@ -22,37 +22,37 @@ import image6 from '@/assets/images/education6.png';
     <div class="gallery-item">
       <img :src="image1" alt="Description 1" />
       <div class="overlay">
-        <p>Description for Image 1</p>
+        <p>Introduction Video</p>
       </div>
     </div>
     <div class="gallery-item">
       <img :src="image2" alt="Description 2" />
       <div class="overlay">
-        <p>Description for Image 2</p>
+        <p>Open Source Textbooks Save Students $1 Billion</p>
       </div>
     </div>
     <div class="gallery-item">
       <img :src="image3" alt="Description 3" />
       <div class="overlay">
-        <p>Description for Image 3</p>
+        <p>Publication in Open Stax's College Success Book</p>
       </div>
     </div>
     <div class="gallery-item">
       <img :src="image4" alt="Description 4" />
       <div class="overlay">
-        <p>Description for Image 4</p>
+        <p>A Scholar's Journey From School to School</p>
       </div>
     </div>
     <div class="gallery-item">
       <img :src="image5" alt="Description 5" />
       <div class="overlay">
-        <p>Description for Image 5</p>
+        <p>How Open Ed Opens up Student Advocacy in Promoting OER</p>
       </div>
     </div>
     <div class="gallery-item">
       <img :src="image6" alt="Description 6" />
       <div class="overlay">
-        <p>Description for Image 6</p>
+        <p>Webinar Business Models in Higher Education</p>
       </div>
     </div>
   </div>
@@ -76,18 +76,18 @@ import image6 from '@/assets/images/education6.png';
 .image-gallery {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1em;
+  gap: 0;
   padding: 2em;
-  justify-items: center;
 }
 
 .gallery-item {
   position: relative;
-  width: 300px;
-  height: 200px;
+  width: 100%; /
+  padding-bottom: 66.66%;
 }
 
 .gallery-item img {
+  position: absolute;
   width: 100%;
   height: 100%;
   object-fit: cover;
